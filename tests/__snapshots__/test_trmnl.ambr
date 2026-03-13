@@ -40,7 +40,7 @@
 # ---
 # name: test_retrieve_data[get_me]
   dict({
-    'api_key': 'user_8vhhg033zk438szrp261tjxv',
+    'api_key': 'user_aaaaaaaaaa',
     'email': 'joostlek@outlook.com',
     'first_name': 'Joost',
     'identifier': 30561,
