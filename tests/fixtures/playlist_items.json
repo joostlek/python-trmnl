@@ -1,0 +1,72 @@
+{
+    "data": [
+        {
+            "created_at": "2026-03-11T15:46:06.783Z",
+            "device_id": 42793,
+            "id": 523205,
+            "mashup_id": null,
+            "mirror": false,
+            "plugin_setting_id": 258760,
+            "rendered_at": "2026-03-13T19:41:42.941Z",
+            "row_order": 1610612736,
+            "updated_at": "2026-03-13T19:41:42.941Z",
+            "visible": true,
+            "plugin_setting": {
+                "id": 258760,
+                "name": "Hacker News",
+                "plugin_id": 13
+            }
+        },
+        {
+            "created_at": "2026-03-09T14:14:51.766Z",
+            "device_id": 42793,
+            "id": 521281,
+            "mashup_id": null,
+            "mirror": false,
+            "plugin_setting_id": 257679,
+            "rendered_at": "2026-03-13T19:11:23.515Z",
+            "row_order": 0,
+            "updated_at": "2026-03-13T19:11:23.515Z",
+            "visible": true,
+            "plugin_setting": {
+                "id": 257679,
+                "name": "2026",
+                "plugin_id": 2
+            }
+        },
+        {
+            "created_at": "2026-03-11T21:39:03.245Z",
+            "device_id": 42793,
+            "id": 523467,
+            "mashup_id": null,
+            "mirror": false,
+            "plugin_setting_id": 258908,
+            "rendered_at": "2026-03-13T19:56:29.226Z",
+            "row_order": 1879048192,
+            "updated_at": "2026-03-13T19:56:29.226Z",
+            "visible": true,
+            "plugin_setting": {
+                "id": 258908,
+                "name": "XKCD Comic (with Hover text)",
+                "plugin_id": 37
+            }
+        },
+        {
+            "created_at": "2026-03-09T14:15:44.444Z",
+            "device_id": 42793,
+            "id": 521286,
+            "mashup_id": null,
+            "mirror": false,
+            "plugin_setting_id": 257682,
+            "rendered_at": "2026-03-13T19:26:37.233Z",
+            "row_order": 1073741824,
+            "updated_at": "2026-03-13T19:26:37.233Z",
+            "visible": true,
+            "plugin_setting": {
+                "id": 257682,
+                "name": "Joostlek",
+                "plugin_id": 1
+            }
+        }
+    ]
+}

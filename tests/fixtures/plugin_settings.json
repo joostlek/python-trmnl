@@ -1,0 +1,24 @@
+{
+    "data": [
+        {
+            "id": 258760,
+            "name": "Hacker News",
+            "plugin_id": 13
+        },
+        {
+            "id": 258908,
+            "name": "XKCD Comic (with Hover text)",
+            "plugin_id": 37
+        },
+        {
+            "id": 257679,
+            "name": "2026",
+            "plugin_id": 2
+        },
+        {
+            "id": 257682,
+            "name": "Joostlek",
+            "plugin_id": 1
+        }
+    ]
+}

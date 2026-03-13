@@ -1,0 +1,150 @@
+# serializer version: 1
+# name: test_retrieve_data[create_plugin_setting]
+  dict({
+    'identifier': 258760,
+    'name': 'Hacker News',
+    'plugin_id': 13,
+  })
+# ---
+# name: test_retrieve_data[get_device]
+  dict({
+    'battery_voltage': 3.87,
+    'friendly_id': '1RJXS4',
+    'identifier': 42793,
+    'mac_address': 'B0:A6:04:02:EB:78',
+    'name': "Joost's TRMNL",
+    'percent_charged': 72.5,
+    'rssi': -64,
+    'sleep_end_time': 480,
+    'sleep_mode_enabled': False,
+    'sleep_start_time': 1320,
+    'wifi_strength': 50,
+  })
+# ---
+# name: test_retrieve_data[get_devices]
+  list([
+    dict({
+      'battery_voltage': 3.87,
+      'friendly_id': '1RJXS4',
+      'identifier': 42793,
+      'mac_address': 'B0:A6:04:02:EB:78',
+      'name': "Joost's TRMNL",
+      'percent_charged': 72.5,
+      'rssi': -64,
+      'sleep_end_time': 480,
+      'sleep_mode_enabled': False,
+      'sleep_start_time': 1320,
+      'wifi_strength': 50,
+    }),
+  ])
+# ---
+# name: test_retrieve_data[get_me]
+  dict({
+    'api_key': 'user_8vhhg033zk438szrp261tjxv',
+    'email': 'joostlek@outlook.com',
+    'first_name': 'Joost',
+    'identifier': 30561,
+    'last_name': 'Lekkerkerker',
+    'locale': 'en',
+    'name': 'Joost Lekkerkerker',
+    'time_zone': 'Amsterdam',
+    'time_zone_iana': 'Europe/Amsterdam',
+    'utc_offset': 3600,
+  })
+# ---
+# name: test_retrieve_data[get_playlist_items]
+  list([
+    dict({
+      'created_at': '2026-03-11T15:46:06.783Z',
+      'device_id': 42793,
+      'identifier': 523205,
+      'mashup_id': None,
+      'mirror': False,
+      'plugin_setting': dict({
+        'identifier': 258760,
+        'name': 'Hacker News',
+        'plugin_id': 13,
+      }),
+      'plugin_setting_id': 258760,
+      'rendered_at': '2026-03-13T19:41:42.941Z',
+      'row_order': 1610612736,
+      'updated_at': '2026-03-13T19:41:42.941Z',
+      'visible': True,
+    }),
+    dict({
+      'created_at': '2026-03-09T14:14:51.766Z',
+      'device_id': 42793,
+      'identifier': 521281,
+      'mashup_id': None,
+      'mirror': False,
+      'plugin_setting': dict({
+        'identifier': 257679,
+        'name': '2026',
+        'plugin_id': 2,
+      }),
+      'plugin_setting_id': 257679,
+      'rendered_at': '2026-03-13T19:11:23.515Z',
+      'row_order': 0,
+      'updated_at': '2026-03-13T19:11:23.515Z',
+      'visible': True,
+    }),
+    dict({
+      'created_at': '2026-03-11T21:39:03.245Z',
+      'device_id': 42793,
+      'identifier': 523467,
+      'mashup_id': None,
+      'mirror': False,
+      'plugin_setting': dict({
+        'identifier': 258908,
+        'name': 'XKCD Comic (with Hover text)',
+        'plugin_id': 37,
+      }),
+      'plugin_setting_id': 258908,
+      'rendered_at': '2026-03-13T19:56:29.226Z',
+      'row_order': 1879048192,
+      'updated_at': '2026-03-13T19:56:29.226Z',
+      'visible': True,
+    }),
+    dict({
+      'created_at': '2026-03-09T14:15:44.444Z',
+      'device_id': 42793,
+      'identifier': 521286,
+      'mashup_id': None,
+      'mirror': False,
+      'plugin_setting': dict({
+        'identifier': 257682,
+        'name': 'Joostlek',
+        'plugin_id': 1,
+      }),
+      'plugin_setting_id': 257682,
+      'rendered_at': '2026-03-13T19:26:37.233Z',
+      'row_order': 1073741824,
+      'updated_at': '2026-03-13T19:26:37.233Z',
+      'visible': True,
+    }),
+  ])
+# ---
+# name: test_retrieve_data[get_plugin_settings]
+  list([
+    dict({
+      'identifier': 258760,
+      'name': 'Hacker News',
+      'plugin_id': 13,
+    }),
+    dict({
+      'identifier': 258908,
+      'name': 'XKCD Comic (with Hover text)',
+      'plugin_id': 37,
+    }),
+    dict({
+      'identifier': 257679,
+      'name': '2026',
+      'plugin_id': 2,
+    }),
+    dict({
+      'identifier': 257682,
+      'name': 'Joostlek',
+      'plugin_id': 1,
+    }),
+  ])
+# ---
