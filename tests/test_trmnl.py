@@ -8,6 +8,8 @@ from aiohttp.hdrs import METH_DELETE, METH_GET, METH_PATCH, METH_POST
 from aioresponses import aioresponses
 import pytest
 
+from trmnl.exceptions import TRMNLAuthenticationError, TRMNLError
+
 from . import load_fixture
 from .const import HEADERS, URL
 
@@ -131,3 +133,23 @@ async def test_delete_plugin_setting(
         headers=HEADERS,
         json=None,
     )
+
+
+async def test_authentication_error(
+    responses: aioresponses,
+    client: TRMNLClient,
+) -> None:
+    """Test that a 401 response raises TRMNLAuthenticationError."""
+    responses.get(f"{URL}devices", status=401)
+    with pytest.raises(TRMNLAuthenticationError):
+        await client.get_devices()
+
+
+async def test_generic_error(
+    responses: aioresponses,
+    client: TRMNLClient,
+) -> None:
+    """Test that a non-401 error response raises TRMNLError."""
+    responses.get(f"{URL}devices", status=500)
+    with pytest.raises(TRMNLError):
+        await client.get_devices()
