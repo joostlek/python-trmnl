@@ -11,6 +11,7 @@ from aiohttp import ClientSession
 from aiohttp.hdrs import METH_DELETE, METH_GET, METH_PATCH, METH_POST
 from yarl import URL
 
+from trmnl.exceptions import TRMNLAuthenticationError, TRMNLError
 from trmnl.models import (
     Device,
     DeviceResponse,
@@ -65,6 +66,14 @@ class TRMNLClient:
                 headers=headers,
                 json=data,
             )
+
+        if response.status == 401:
+            msg = "Authentication failed. Check your API token."
+            raise TRMNLAuthenticationError(msg)
+
+        if response.status >= 400:
+            msg = f"Request failed with status {response.status}."
+            raise TRMNLError(msg)
 
         return await response.text()
 
