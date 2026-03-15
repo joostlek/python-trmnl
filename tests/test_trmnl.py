@@ -24,12 +24,6 @@ if TYPE_CHECKING:
         ("get_me", {}, "me", "me"),
         ("get_playlist_items", {}, "playlists/items", "playlist_items"),
         ("get_plugin_settings", {}, "plugin_settings", "plugin_settings"),
-        (
-            "create_plugin_setting",
-            {"name": "Hacker News", "plugin_id": 13},
-            "plugin_settings",
-            "plugin_setting",
-        ),
     ],
     ids=[
         "get_devices",
@@ -37,10 +31,9 @@ if TYPE_CHECKING:
         "get_me",
         "get_playlist_items",
         "get_plugin_settings",
-        "create_plugin_setting",
     ],
 )
-async def test_retrieve_data(
+async def test_get(
     responses: aioresponses,
     client: TRMNLClient,
     snapshot: SnapshotAssertion,
@@ -49,34 +42,39 @@ async def test_retrieve_data(
     endpoint: str,
     fixture: str,
 ) -> None:
-    """Test retrieving data."""
-    if method == "create_plugin_setting":
-        responses.post(
-            f"{URL}{endpoint}",
-            status=200,
-            body=load_fixture(f"{fixture}.json"),
-        )
-    else:
-        responses.get(
-            f"{URL}{endpoint}",
-            status=200,
-            body=load_fixture(f"{fixture}.json"),
-        )
+    """Test GET endpoints."""
+    responses.get(
+        f"{URL}{endpoint}",
+        status=200,
+        body=load_fixture(f"{fixture}.json"),
+    )
     assert await getattr(client, method)(**kwargs) == snapshot
-    if method == "create_plugin_setting":
-        responses.assert_called_once_with(
-            f"{URL}{endpoint}",
-            METH_POST,
-            headers=HEADERS,
-            json={"name": "Hacker News", "plugin_id": 13},
-        )
-    else:
-        responses.assert_called_once_with(
-            f"{URL}{endpoint}",
-            METH_GET,
-            headers=HEADERS,
-            json=None,
-        )
+    responses.assert_called_once_with(
+        f"{URL}{endpoint}",
+        METH_GET,
+        headers=HEADERS,
+        json=None,
+    )
+
+
+async def test_create_plugin_setting(
+    responses: aioresponses,
+    client: TRMNLClient,
+    snapshot: SnapshotAssertion,
+) -> None:
+    """Test creating a plugin setting."""
+    responses.post(
+        f"{URL}plugin_settings",
+        status=200,
+        body=load_fixture("plugin_setting.json"),
+    )
+    assert await client.create_plugin_setting("Hacker News", 13) == snapshot
+    responses.assert_called_once_with(
+        f"{URL}plugin_settings",
+        METH_POST,
+        headers=HEADERS,
+        json={"name": "Hacker News", "plugin_id": 13},
+    )
 
 
 async def test_update_device(
