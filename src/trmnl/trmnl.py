@@ -68,12 +68,12 @@ class TRMNLClient:
             )
 
         if response.status == 401:
-            raise TRMNLAuthenticationError(
-                "Authentication failed. Check your API token."
-            )
+            msg = "Authentication failed. Check your API token."
+            raise TRMNLAuthenticationError(msg)
 
         if response.status >= 400:
-            raise TRMNLError(f"Request failed with status {response.status}.")
+            msg = f"Request failed with status {response.status}."
+            raise TRMNLError(msg)
 
         return await response.text()
 
