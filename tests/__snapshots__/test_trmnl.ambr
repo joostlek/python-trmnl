@@ -1,12 +1,12 @@
 # serializer version: 1
-# name: test_retrieve_data[create_plugin_setting]
+# name: test_create_plugin_setting
   dict({
     'identifier': 258760,
     'name': 'Hacker News',
     'plugin_id': 13,
   })
 # ---
-# name: test_retrieve_data[get_device]
+# name: test_get[get_device]
   dict({
     'battery_voltage': 3.87,
     'friendly_id': '1RJXS4',
@@ -21,7 +21,7 @@
     'wifi_strength': 50,
   })
 # ---
-# name: test_retrieve_data[get_devices]
+# name: test_get[get_devices]
   list([
     dict({
       'battery_voltage': 3.87,
@@ -38,7 +38,7 @@
     }),
   ])
 # ---
-# name: test_retrieve_data[get_me]
+# name: test_get[get_me]
   dict({
     'api_key': 'user_aaaaaaaaaa',
     'email': 'joostlek@outlook.com',
@@ -52,7 +52,7 @@
     'utc_offset': 3600,
   })
 # ---
-# name: test_retrieve_data[get_playlist_items]
+# name: test_get[get_playlist_items]
   list([
     dict({
       'created_at': '2026-03-11T15:46:06.783Z',
@@ -124,7 +124,7 @@
     }),
   ])
 # ---
-# name: test_retrieve_data[get_plugin_settings]
+# name: test_get[get_plugin_settings]
   list([
     dict({
       'identifier': 258760,
