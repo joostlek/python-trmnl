@@ -3,192 +3,192 @@ name: Linting
 
 # yamllint disable-line rule:truthy
 on:
-    push:
-        branches:
-            - main
-    pull_request:
-    workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
 
 env:
-    DEFAULT_PYTHON: "3.13"
+  DEFAULT_PYTHON: "3.13"
 
 jobs:
-    codespell:
-        name: codespell
-        runs-on: ubuntu-latest
-        steps:
-            - name: ⤵️ Check out code from GitHub
-              uses: actions/checkout@v6.0.2
-            - name: 🏗 Set up Poetry
-              run: pipx install poetry
-            - name: 🏗 Set up Python ${{ env.DEFAULT_PYTHON }}
-              id: python
-              uses: actions/setup-python@v6.2.0
-              with:
-                  python-version: ${{ env.DEFAULT_PYTHON }}
-                  cache: "poetry"
-            - name: 🏗 Install workflow dependencies
-              run: |
-                  poetry config virtualenvs.create true
-                  poetry config virtualenvs.in-project true
-            - name: 🏗 Install Python dependencies
-              run: poetry install --no-interaction
-            - name: 🚀 Check code for common misspellings
-              run: poetry run prek run codespell --all-files
+  codespell:
+    name: codespell
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⤵️ Check out code from GitHub
+        uses: actions/checkout@v6.0.2
+      - name: 🏗 Set up Poetry
+        run: pipx install poetry
+      - name: 🏗 Set up Python ${{ env.DEFAULT_PYTHON }}
+        id: python
+        uses: actions/setup-python@v6.2.0
+        with:
+          python-version: ${{ env.DEFAULT_PYTHON }}
+          cache: "poetry"
+      - name: 🏗 Install workflow dependencies
+        run: |
+          poetry config virtualenvs.create true
+          poetry config virtualenvs.in-project true
+      - name: 🏗 Install Python dependencies
+        run: poetry install --no-interaction
+      - name: 🚀 Check code for common misspellings
+        run: poetry run prek run codespell --all-files
 
-    ruff:
-        name: Ruff
-        runs-on: ubuntu-latest
-        steps:
-            - name: ⤵️ Check out code from GitHub
-              uses: actions/checkout@v6.0.2
-            - name: 🏗 Set up Poetry
-              run: pipx install poetry
-            - name: 🏗 Set up Python ${{ env.DEFAULT_PYTHON }}
-              id: python
-              uses: actions/setup-python@v6.2.0
-              with:
-                  python-version: ${{ env.DEFAULT_PYTHON }}
-                  cache: "poetry"
-            - name: 🏗 Install workflow dependencies
-              run: |
-                  poetry config virtualenvs.create true
-                  poetry config virtualenvs.in-project true
-            - name: 🏗 Install Python dependencies
-              run: poetry install --no-interaction
-            - name: 🚀 Run ruff linter
-              run: poetry run ruff check --output-format=github .
-            - name: 🚀 Run ruff formatter
-              run: poetry run ruff format --check .
+  ruff:
+    name: Ruff
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⤵️ Check out code from GitHub
+        uses: actions/checkout@v6.0.2
+      - name: 🏗 Set up Poetry
+        run: pipx install poetry
+      - name: 🏗 Set up Python ${{ env.DEFAULT_PYTHON }}
+        id: python
+        uses: actions/setup-python@v6.2.0
+        with:
+          python-version: ${{ env.DEFAULT_PYTHON }}
+          cache: "poetry"
+      - name: 🏗 Install workflow dependencies
+        run: |
+          poetry config virtualenvs.create true
+          poetry config virtualenvs.in-project true
+      - name: 🏗 Install Python dependencies
+        run: poetry install --no-interaction
+      - name: 🚀 Run ruff linter
+        run: poetry run ruff check --output-format=github .
+      - name: 🚀 Run ruff formatter
+        run: poetry run ruff format --check .
 
-    prek-builtin-hooks:
-        name: prek-builtin-hooks
-        runs-on: ubuntu-latest
-        steps:
-            - name: ⤵️ Check out code from GitHub
-              uses: actions/checkout@v6.0.2
-            - name: 🏗 Install prek
-              run: pipx install prek
-            - name: 🚀 Check for case conflicts
-              run: prek run check-case-conflict --all-files
-            - name: 🚀 Check that executables have shebangs
-              run: prek run check-executables-have-shebangs --all-files
-            - name: 🚀 Check JSON files
-              run: prek run check-json --all-files
-            - name: 🚀 Check for merge conflicts
-              run: prek run check-merge-conflict --all-files
-            - name: 🚀 Check for broken symlinks
-              run: prek run check-symlinks --all-files
-            - name: 🚀 Check TOML files
-              run: prek run check-toml --all-files
-            - name: 🚀 Check XML files
-              run: prek run check-xml --all-files
-            - name: 🚀 Check YAML files
-              run: prek run check-yaml --all-files
-            - name: 🚀 Detect Private Keys
-              run: prek run detect-private-key --all-files
-            - name: 🚀 Check End of Files
-              run: prek run end-of-file-fixer --all-files
-            - name: 🚀 Trim Trailing Whitespace
-              run: prek run trailing-whitespace --all-files
+  prek-builtin-hooks:
+    name: prek-builtin-hooks
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⤵️ Check out code from GitHub
+        uses: actions/checkout@v6.0.2
+      - name: 🏗 Install prek
+        run: pipx install prek
+      - name: 🚀 Check for case conflicts
+        run: prek run check-case-conflict --all-files
+      - name: 🚀 Check that executables have shebangs
+        run: prek run check-executables-have-shebangs --all-files
+      - name: 🚀 Check JSON files
+        run: prek run check-json --all-files
+      - name: 🚀 Check for merge conflicts
+        run: prek run check-merge-conflict --all-files
+      - name: 🚀 Check for broken symlinks
+        run: prek run check-symlinks --all-files
+      - name: 🚀 Check TOML files
+        run: prek run check-toml --all-files
+      - name: 🚀 Check XML files
+        run: prek run check-xml --all-files
+      - name: 🚀 Check YAML files
+        run: prek run check-yaml --all-files
+      - name: 🚀 Detect Private Keys
+        run: prek run detect-private-key --all-files
+      - name: 🚀 Check End of Files
+        run: prek run end-of-file-fixer --all-files
+      - name: 🚀 Trim Trailing Whitespace
+        run: prek run trailing-whitespace --all-files
 
-    pre-commit-hooks:
-        name: pre-commit-hooks
-        runs-on: ubuntu-latest
-        steps:
-            - name: ⤵️ Check out code from GitHub
-              uses: actions/checkout@v6.0.2
-            - name: 🏗 Set up Poetry
-              run: pipx install poetry
-            - name: 🏗 Set up Python ${{ env.DEFAULT_PYTHON }}
-              id: python
-              uses: actions/setup-python@v6.2.0
-              with:
-                  python-version: ${{ env.DEFAULT_PYTHON }}
-                  cache: "poetry"
-            - name: 🏗 Install workflow dependencies
-              run: |
-                  poetry config virtualenvs.create true
-                  poetry config virtualenvs.in-project true
-            - name: 🏗 Install Python dependencies
-              run: poetry install --no-interaction
-            - name: 🚀 Check Python AST
-              run: poetry run prek run check-ast --all-files
-            - name: 🚀 Check docstring is first
-              run: poetry run prek run check-docstring-first --all-files
+  pre-commit-hooks:
+    name: pre-commit-hooks
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⤵️ Check out code from GitHub
+        uses: actions/checkout@v6.0.2
+      - name: 🏗 Set up Poetry
+        run: pipx install poetry
+      - name: 🏗 Set up Python ${{ env.DEFAULT_PYTHON }}
+        id: python
+        uses: actions/setup-python@v6.2.0
+        with:
+          python-version: ${{ env.DEFAULT_PYTHON }}
+          cache: "poetry"
+      - name: 🏗 Install workflow dependencies
+        run: |
+          poetry config virtualenvs.create true
+          poetry config virtualenvs.in-project true
+      - name: 🏗 Install Python dependencies
+        run: poetry install --no-interaction
+      - name: 🚀 Check Python AST
+        run: poetry run prek run check-ast --all-files
+      - name: 🚀 Check docstring is first
+        run: poetry run prek run check-docstring-first --all-files
 
-    pylint:
-        name: pylint
-        runs-on: ubuntu-latest
-        steps:
-            - name: ⤵️ Check out code from GitHub
-              uses: actions/checkout@v6.0.2
-            - name: 🏗 Set up Poetry
-              run: pipx install poetry
-            - name: 🏗 Set up Python ${{ env.DEFAULT_PYTHON }}
-              id: python
-              uses: actions/setup-python@v6.2.0
-              with:
-                  python-version: ${{ env.DEFAULT_PYTHON }}
-                  cache: "poetry"
-            - name: 🏗 Install workflow dependencies
-              run: |
-                  poetry config virtualenvs.create true
-                  poetry config virtualenvs.in-project true
-            - name: 🏗 Install Python dependencies
-              run: poetry install --no-interaction
-            - name: 🚀 Run pylint
-              run: poetry run prek run pylint --all-files
+  pylint:
+    name: pylint
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⤵️ Check out code from GitHub
+        uses: actions/checkout@v6.0.2
+      - name: 🏗 Set up Poetry
+        run: pipx install poetry
+      - name: 🏗 Set up Python ${{ env.DEFAULT_PYTHON }}
+        id: python
+        uses: actions/setup-python@v6.2.0
+        with:
+          python-version: ${{ env.DEFAULT_PYTHON }}
+          cache: "poetry"
+      - name: 🏗 Install workflow dependencies
+        run: |
+          poetry config virtualenvs.create true
+          poetry config virtualenvs.in-project true
+      - name: 🏗 Install Python dependencies
+        run: poetry install --no-interaction
+      - name: 🚀 Run pylint
+        run: poetry run prek run pylint --all-files
 
-    yamllint:
-        name: yamllint
-        runs-on: ubuntu-latest
-        steps:
-            - name: ⤵️ Check out code from GitHub
-              uses: actions/checkout@v6.0.2
-            - name: 🏗 Set up Poetry
-              run: pipx install poetry
-            - name: 🏗 Set up Python ${{ env.DEFAULT_PYTHON }}
-              id: python
-              uses: actions/setup-python@v6.2.0
-              with:
-                  python-version: ${{ env.DEFAULT_PYTHON }}
-                  cache: "poetry"
-            - name: 🏗 Install workflow dependencies
-              run: |
-                  poetry config virtualenvs.create true
-                  poetry config virtualenvs.in-project true
-            - name: 🏗 Install Python dependencies
-              run: poetry install --no-interaction
-            - name: 🚀 Run yamllint
-              run: poetry run yamllint .
+  yamllint:
+    name: yamllint
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⤵️ Check out code from GitHub
+        uses: actions/checkout@v6.0.2
+      - name: 🏗 Set up Poetry
+        run: pipx install poetry
+      - name: 🏗 Set up Python ${{ env.DEFAULT_PYTHON }}
+        id: python
+        uses: actions/setup-python@v6.2.0
+        with:
+          python-version: ${{ env.DEFAULT_PYTHON }}
+          cache: "poetry"
+      - name: 🏗 Install workflow dependencies
+        run: |
+          poetry config virtualenvs.create true
+          poetry config virtualenvs.in-project true
+      - name: 🏗 Install Python dependencies
+        run: poetry install --no-interaction
+      - name: 🚀 Run yamllint
+        run: poetry run yamllint .
 
-    prettier:
-        name: Prettier
-        runs-on: ubuntu-latest
-        steps:
-            - name: ⤵️ Check out code from GitHub
-              uses: actions/checkout@v6.0.2
-            - name: 🏗 Set up Poetry
-              run: pipx install poetry
-            - name: 🏗 Set up Python ${{ env.DEFAULT_PYTHON }}
-              id: python
-              uses: actions/setup-python@v6.2.0
-              with:
-                  python-version: ${{ env.DEFAULT_PYTHON }}
-                  cache: "poetry"
-            - name: 🏗 Install workflow dependencies
-              run: |
-                  poetry config virtualenvs.create true
-                  poetry config virtualenvs.in-project true
-            - name: 🏗 Install Python dependencies
-              run: poetry install --no-interaction
-            - name: 🏗 Set up Node.js
-              uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
-              with:
-                  node-version-file: ".nvmrc"
-                  cache: "npm"
-            - name: 🏗 Install NPM dependencies
-              run: npm install
-            - name: 🚀 Run prettier
-              run: poetry run prek run prettier --all-files
+  prettier:
+    name: Prettier
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⤵️ Check out code from GitHub
+        uses: actions/checkout@v6.0.2
+      - name: 🏗 Set up Poetry
+        run: pipx install poetry
+      - name: 🏗 Set up Python ${{ env.DEFAULT_PYTHON }}
+        id: python
+        uses: actions/setup-python@v6.2.0
+        with:
+          python-version: ${{ env.DEFAULT_PYTHON }}
+          cache: "poetry"
+      - name: 🏗 Install workflow dependencies
+        run: |
+          poetry config virtualenvs.create true
+          poetry config virtualenvs.in-project true
+      - name: 🏗 Install Python dependencies
+        run: poetry install --no-interaction
+      - name: 🏗 Set up Node.js
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+      - name: 🏗 Install NPM dependencies
+        run: npm install
+      - name: 🚀 Run prettier
+        run: poetry run prek run prettier --all-files
