@@ -52,6 +52,20 @@
     'utc_offset': 3600,
   })
 # ---
+# name: test_get[get_me_without_api_key]
+  dict({
+    'api_key': None,
+    'email': 'joostlek@outlook.com',
+    'first_name': 'Joost',
+    'identifier': 30561,
+    'last_name': 'Lekkerkerker',
+    'locale': 'en',
+    'name': 'Joost Lekkerkerker',
+    'time_zone': 'Amsterdam',
+    'time_zone_iana': 'Europe/Amsterdam',
+    'utc_offset': 3600,
+  })
+# ---
 # name: test_get[get_playlist_items]
   list([
     dict({

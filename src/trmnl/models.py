@@ -75,7 +75,8 @@ class User(DataClassORJSONMixin):
     time_zone: str
     time_zone_iana: str
     utc_offset: int
-    api_key: str
+    # Only returned when authenticated with the legacy account API key
+    api_key: str | None = None
 
 
 @dataclass
