@@ -7,11 +7,17 @@ from dataclasses import dataclass
 import logging
 from typing import Any, Self
 
-from aiohttp import ClientSession
-from aiohttp.hdrs import METH_DELETE, METH_GET, METH_PATCH, METH_POST
+from aiohttp import ClientResponse, ClientSession
+from aiohttp.hdrs import METH_DELETE, METH_GET, METH_PATCH, METH_POST, METH_PUT
 from yarl import URL
 
-from trmnl.exceptions import TRMNLAuthenticationError, TRMNLError
+from trmnl.exceptions import (
+    TRMNLAuthenticationError,
+    TRMNLError,
+    TRMNLForbiddenError,
+    TRMNLNotFoundError,
+    TRMNLRateLimitError,
+)
 from trmnl.models import (
     Device,
     DeviceResponse,
@@ -30,6 +36,23 @@ VERSION = "1"
 _LOGGER = logging.getLogger(__package__)
 
 HOST = "trmnl.com"
+
+_ERRORS: dict[int, type[TRMNLError]] = {
+    403: TRMNLForbiddenError,
+    404: TRMNLNotFoundError,
+}
+
+
+async def _error_message(response: ClientResponse) -> str:
+    """Return the error message, with the server's reason when it sends one."""
+    try:
+        body = await response.json(content_type=None)
+    except ValueError:
+        body = None
+    reason = body.get("error") if isinstance(body, dict) else None
+    if isinstance(reason, str):
+        return f"Request failed with status {response.status}: {reason}"
+    return f"Request failed with status {response.status}."
 
 
 @dataclass
@@ -55,6 +78,8 @@ class TRMNLClient:
         headers = {
             "User-Agent": f"python-trmnl/{VERSION}",
             "Authorization": f"Bearer {self.token}",
+            # Without it, Laravel BYOS servers redirect to a login page instead of 401.
+            "Accept": "application/json",
         }
 
         if self.session is None:
@@ -73,9 +98,17 @@ class TRMNLClient:
             msg = "Authentication failed. Check your API token."
             raise TRMNLAuthenticationError(msg)
 
+        if response.status == 429:
+            retry_after = response.headers.get("Retry-After", "")
+            raise TRMNLRateLimitError(
+                await _error_message(response),
+                int(retry_after) if retry_after.isdigit() else None,
+            )
+
         if response.status >= 400:
-            msg = f"Request failed with status {response.status}."
-            raise TRMNLError(msg)
+            raise _ERRORS.get(response.status, TRMNLError)(
+                await _error_message(response)
+            )
 
         return await response.text()
 
@@ -90,6 +123,10 @@ class TRMNLClient:
     async def _post(self, uri: str, data: dict[str, Any]) -> str:
         """Handle a POST request to the TRMNL API."""
         return await self._request(uri, method=METH_POST, data=data)
+
+    async def _put(self, uri: str, data: dict[str, Any]) -> str:
+        """Handle a PUT request to the TRMNL API."""
+        return await self._request(uri, method=METH_PUT, data=data)
 
     async def _delete(self, uri: str) -> None:
         """Handle a DELETE request to the TRMNL API."""
@@ -150,16 +187,49 @@ class TRMNLClient:
         result = await self._get(uri)
         return PluginSettingsResponse.from_json(result).data
 
-    async def create_plugin_setting(self, name: str, plugin_id: int) -> PluginSetting:
-        """Create a new plugin setting."""
+    async def create_plugin_setting(
+        self,
+        name: str,
+        plugin_id: int | None = None,
+        *,
+        plugin_keyname: str | None = None,
+    ) -> PluginSetting:
+        """Create a new plugin setting by plugin id, or by a native plugin's keyname."""
+        payload = {"plugin_id": plugin_id, "plugin_keyname": plugin_keyname}
         result = await self._post(
-            "plugin_settings", {"name": name, "plugin_id": plugin_id}
+            "plugin_settings",
+            {"name": name}
+            | {key: value for key, value in payload.items() if value is not None},
         )
         return PluginSettingResponse.from_json(result).data
 
     async def delete_plugin_setting(self, plugin_setting_id: int) -> None:
         """Delete a plugin setting."""
         await self._delete(f"plugin_settings/{plugin_setting_id}")
+
+    async def update_plugin_setting_data(
+        self, plugin_setting_id: int, data: dict[str, Any]
+    ) -> None:
+        """Send merge variables to a webhook plugin setting."""
+        await self._post(
+            f"plugin_settings/{plugin_setting_id}/data", {"merge_variables": data}
+        )
+
+    async def update_plugin_setting_markup(
+        self, plugin_setting_id: int, size: str, content: str
+    ) -> None:
+        """Write the markup of one size, such as markup_full."""
+        await self._put(
+            f"plugin_settings/{plugin_setting_id}/markup/{size}", {"content": content}
+        )
+
+    async def update_plugin_setting_fields(
+        self, plugin_setting_id: int, fields: dict[str, Any]
+    ) -> None:
+        """Update the form fields of a plugin setting, such as strategy."""
+        await self._patch(
+            f"plugin_settings/{plugin_setting_id}/settings", {"fields": fields}
+        )
 
     async def close(self) -> None:
         """Close open client session."""
