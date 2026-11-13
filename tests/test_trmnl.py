@@ -10,7 +10,13 @@ from aiointercept import aiointercept
 import pytest
 
 from trmnl import TRMNLClient
-from trmnl.exceptions import TRMNLAuthenticationError, TRMNLError
+from trmnl.exceptions import (
+    TRMNLAuthenticationError,
+    TRMNLError,
+    TRMNLForbiddenError,
+    TRMNLNotFoundError,
+    TRMNLRateLimitError,
+)
 
 from . import load_fixture
 from .const import HEADERS, URL
@@ -146,14 +152,68 @@ async def test_authentication_error(
         await client.get_devices()
 
 
-async def test_generic_error(
+@pytest.mark.parametrize(
+    ("status", "body", "error", "message"),
+    [
+        (
+            403,
+            '{"error": "This is a legacy API key."}',
+            TRMNLForbiddenError,
+            "Request failed with status 403: This is a legacy API key.",
+        ),
+        (
+            404,
+            '{"error": "Device not found"}',
+            TRMNLNotFoundError,
+            "Request failed with status 404: Device not found",
+        ),
+        (500, "", TRMNLError, "Request failed with status 500."),
+        (
+            502,
+            "<html>Bad Gateway</html>",
+            TRMNLError,
+            "Request failed with status 502.",
+        ),
+    ],
+    ids=["forbidden", "not_found", "empty_body", "html_body"],
+)
+async def test_error(  # noqa: PLR0917
     responses: aiointercept,
     client: TRMNLClient,
+    status: int,
+    body: str,
+    error: type[TRMNLError],
+    message: str,
 ) -> None:
-    """Test that a non-401 error response raises TRMNLError."""
-    responses.get(f"{URL}devices", status=500)
-    with pytest.raises(TRMNLError):
+    """Test that an error response raises with the server's reason."""
+    responses.get(f"{URL}devices", status=status, body=body)
+    with pytest.raises(error) as exc_info:
         await client.get_devices()
+    assert str(exc_info.value) == message
+
+
+@pytest.mark.parametrize(
+    ("headers", "retry_after"),
+    [({"Retry-After": "3600"}, 3600), (None, None)],
+    ids=["retry_after", "no_retry_after"],
+)
+async def test_rate_limit_error(
+    responses: aiointercept,
+    client: TRMNLClient,
+    headers: dict[str, str] | None,
+    retry_after: int | None,
+) -> None:
+    """Test that a 429 raises with the reason and the Retry-After seconds."""
+    responses.get(
+        f"{URL}devices",
+        status=429,
+        body='{"error": "Rate limit exceeded."}',
+        headers=headers,
+    )
+    with pytest.raises(TRMNLRateLimitError) as exc_info:
+        await client.get_devices()
+    assert str(exc_info.value) == "Request failed with status 429: Rate limit exceeded."
+    assert exc_info.value.retry_after == retry_after
 
 
 async def test_custom_base_url(responses: aiointercept) -> None:

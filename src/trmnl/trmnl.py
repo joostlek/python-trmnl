@@ -7,11 +7,17 @@ from dataclasses import dataclass
 import logging
 from typing import Any, Self
 
-from aiohttp import ClientSession
+from aiohttp import ClientResponse, ClientSession
 from aiohttp.hdrs import METH_DELETE, METH_GET, METH_PATCH, METH_POST
 from yarl import URL
 
-from trmnl.exceptions import TRMNLAuthenticationError, TRMNLError
+from trmnl.exceptions import (
+    TRMNLAuthenticationError,
+    TRMNLError,
+    TRMNLForbiddenError,
+    TRMNLNotFoundError,
+    TRMNLRateLimitError,
+)
 from trmnl.models import (
     Device,
     DeviceResponse,
@@ -30,6 +36,23 @@ VERSION = "1"
 _LOGGER = logging.getLogger(__package__)
 
 HOST = "trmnl.com"
+
+_ERRORS: dict[int, type[TRMNLError]] = {
+    403: TRMNLForbiddenError,
+    404: TRMNLNotFoundError,
+}
+
+
+async def _error_message(response: ClientResponse) -> str:
+    """Return the error message, with the server's reason when it sends one."""
+    try:
+        body = await response.json(content_type=None)
+    except ValueError:
+        body = None
+    reason = body.get("error") if isinstance(body, dict) else None
+    if isinstance(reason, str):
+        return f"Request failed with status {response.status}: {reason}"
+    return f"Request failed with status {response.status}."
 
 
 @dataclass
@@ -55,6 +78,8 @@ class TRMNLClient:
         headers = {
             "User-Agent": f"python-trmnl/{VERSION}",
             "Authorization": f"Bearer {self.token}",
+            # Without it, Laravel BYOS servers redirect to a login page instead of 401.
+            "Accept": "application/json",
         }
 
         if self.session is None:
@@ -73,9 +98,17 @@ class TRMNLClient:
             msg = "Authentication failed. Check your API token."
             raise TRMNLAuthenticationError(msg)
 
+        if response.status == 429:
+            retry_after = response.headers.get("Retry-After", "")
+            raise TRMNLRateLimitError(
+                await _error_message(response),
+                int(retry_after) if retry_after.isdigit() else None,
+            )
+
         if response.status >= 400:
-            msg = f"Request failed with status {response.status}."
-            raise TRMNLError(msg)
+            raise _ERRORS.get(response.status, TRMNLError)(
+                await _error_message(response)
+            )
 
         return await response.text()
 
