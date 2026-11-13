@@ -16,6 +16,7 @@ from trmnl.models import (
     Device,
     DeviceResponse,
     DevicesResponse,
+    OAuthToken,
     PlaylistItem,
     PlaylistItemsResponse,
     PluginSetting,
@@ -130,6 +131,13 @@ class TRMNLClient:
         """Retrieve the current user."""
         result = await self._get("me")
         return UserResponse.from_json(result).data
+
+    async def migrate_to_oauth(self, client_id: str, name: str) -> OAuthToken:
+        """Trade the account API key for an OAuth token of the given client."""
+        result = await self._post(
+            "oauth/migrations", {"client_id": client_id, "name": name}
+        )
+        return OAuthToken.from_json(result)
 
     async def get_playlist_items(self) -> list[PlaylistItem]:
         """Retrieve all playlist items."""
