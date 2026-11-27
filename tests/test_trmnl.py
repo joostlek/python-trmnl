@@ -82,6 +82,26 @@ async def test_create_plugin_setting(
     )
 
 
+async def test_migrate_to_oauth(
+    responses: aiointercept,
+    client: TRMNLClient,
+    snapshot: SnapshotAssertion,
+) -> None:
+    """Test trading the account API key for an OAuth token."""
+    responses.post(
+        f"{URL}oauth/migrations",
+        status=201,
+        body=load_fixture("oauth_token.json"),
+    )
+    assert await client.migrate_to_oauth("home-assistant", "Home") == snapshot
+    responses.assert_called_once_with(
+        f"{URL}oauth/migrations",
+        METH_POST,
+        headers=HEADERS,
+        json={"client_id": "home-assistant", "name": "Home"},
+    )
+
+
 async def test_update_device(
     responses: aiointercept,
     client: TRMNLClient,

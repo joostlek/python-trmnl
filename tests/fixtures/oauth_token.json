@@ -1,0 +1,9 @@
+{
+  "access_token": "Yp1Bv2hYbV3k0r0EYvLl8RTb5LgX-6EPmJ0XEDhRZ5E",
+  "token_type": "Bearer",
+  "expires_in": 7200,
+  "refresh_token": "PNvt8_HPnJbI4bGhcVCVWeT0mIYV3bB5GyYqKpDbBoM",
+  "scope": "openid profile read devices content delete",
+  "created_at": 1763030400,
+  "sub": "7abd2f69-3f6d-4540-bee8-d9a526d32d6c"
+}
