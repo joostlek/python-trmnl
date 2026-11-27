@@ -38,7 +38,9 @@ class Device(DataClassORJSONMixin):
     identifier: int = field(metadata=field_options(alias="id"))
     name: str
     friendly_id: str
+    model: str
     mac_address: str
+    firmware_version: str | None
     battery_voltage: float | None
     rssi: int | None
     sleep_mode_enabled: bool
@@ -46,6 +48,7 @@ class Device(DataClassORJSONMixin):
     sleep_end_time: int
     percent_charged: float
     wifi_strength: int
+    last_ping_at: str | None
 
 
 @dataclass
@@ -69,8 +72,8 @@ class User(DataClassORJSONMixin):
     identifier: int = field(metadata=field_options(alias="id"))
     name: str
     email: str
-    first_name: str
-    last_name: str
+    first_name: str | None
+    last_name: str | None
     locale: str
     time_zone: str
     time_zone_iana: str
@@ -95,12 +98,13 @@ class PlaylistItem(DataClassORJSONMixin):
     identifier: int = field(metadata=field_options(alias="id"))
     mashup_id: int | None
     mirror: bool
-    plugin_setting_id: int
-    rendered_at: str
+    plugin_setting_id: int | None
+    rendered_at: str | None
     row_order: int
     updated_at: str
     visible: bool
-    plugin_setting: PluginSetting
+    # Absent for mashup items
+    plugin_setting: PluginSetting | None = None
 
 
 @dataclass
